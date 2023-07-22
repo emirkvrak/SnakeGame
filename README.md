@@ -1,8 +1,9 @@
-# PatikaJava101
+# SnakeGame
 
-Bu repoda patikanın verdiği java101 ödevleri bulunuyor.
+* Bu repoda, üniversitede 1. sınıfta yaptığım küçük bir proje olan yılan oyunu kodları bulunmaktadır.
 
 
 ![img](https://github.com/emirkvrak/PatikaJava101/blob/main/PatikaEmir.png)
 
-[Patika java101 Kursu](https://app.patika.dev/courses/java101)
+
+![img](https://github.com/emirkvrak/PatikaJava101/blob/main/PatikaEmir.png)
