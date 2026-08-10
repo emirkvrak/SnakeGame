@@ -10,8 +10,7 @@ public final class SesOynatici implements AutoCloseable {
     private Clip clip;
 
     public void baslat(String dosyaAdi) {
-        try {
-            AudioInputStream akis = AudioSystem.getAudioInputStream(Kaynaklar.akis(dosyaAdi));
+        try (AudioInputStream akis = AudioSystem.getAudioInputStream(Kaynaklar.url(dosyaAdi))) {
             clip = AudioSystem.getClip();
             clip.open(akis);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
