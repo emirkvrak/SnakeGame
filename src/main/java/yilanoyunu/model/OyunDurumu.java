@@ -4,5 +4,6 @@ public enum OyunDurumu {
     HAZIR,
     OYNUYOR,
     DURAKLATILDI,
-    BITTI
+    BITTI,
+    KAZANDI
 }

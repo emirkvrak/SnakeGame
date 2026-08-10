@@ -6,7 +6,7 @@
 
     <groupId>com.emirkvrak</groupId>
     <artifactId>snake-game</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <name>Snake Game</name>
     <description>Java Swing ile hazırlanmış klasik yılan oyunu.</description>
 

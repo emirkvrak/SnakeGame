@@ -2,6 +2,8 @@
 
 Java 21 ve Swing ile geliştirilmiş, tek oyunculu klasik bir yılan oyunudur. Yılan yemleri ve güçlendirmeleri toplar; duvara, kendi gövdesine veya mayınlara çarptığında oyun sona erer.
 
+Güncel sürüm: `v1.0.2`
+
 ## Özellikler
 
 - Ok tuşları veya WASD ile kontrol
@@ -98,6 +100,16 @@ Derleme ve IDE çıktıları (`target/`, `dist/`, `.idea/` vb.) `.gitignore` ile
 ## Kurulum ve Çalıştırma
 
 ### Kaynak koddan
+
+PowerShell script'leri JDK araçlarına erişmek için `JAVA_HOME` değişkeninin tanımlı olmasını bekler. Kontrol etmek için:
+
+```powershell
+java -version
+javac -version
+$env:JAVA_HOME
+```
+
+`JAVA_HOME` boşsa, JDK kurulum klasörünü bu değişkene tanımlayın. `JAVA_HOME` yalnızca JDK klasörünü göstermelidir; sonuna `bin` eklenmez.
 
 ```powershell
 git clone https://github.com/emirkvrak/SnakeGame.git

@@ -1,10 +1,10 @@
 package yilanoyunu.engine;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import yilanoyunu.model.Konum;
@@ -59,7 +59,7 @@ public final class OyunMotoru {
         guc = null;
         gucKalanHareket = 0;
         yavaslatmaKalanHareket = 0;
-        durum = OyunDurumu.HAZIR;
+        durum = yem == null ? OyunDurumu.KAZANDI : OyunDurumu.HAZIR;
     }
 
     public void yonDegistir(Yon yeniYon) {
@@ -84,11 +84,22 @@ public final class OyunMotoru {
         yilan.addFirst(kafa);
         if (kafa.equals(yem)) {
             skor += 10;
+            yem = null;
             yem = rastgeleBosKonum();
-            if (skor % 50 == 0) engeller.add(rastgeleBosKonum());
+            if (yem == null) {
+                durum = OyunDurumu.KAZANDI;
+                return;
+            }
+            if (skor % 50 == 0) {
+                Konum yeniEngel = rastgeleBosKonum();
+                if (yeniEngel != null) engeller.add(yeniEngel);
+            }
             if (skor % 30 == 0 && guc == null) {
-                guc = new Guc(rastgeleBosKonum(), random.nextBoolean() ? GucTuru.ALTIN_ELMA : GucTuru.BUZ);
-                gucKalanHareket = 55;
+                Konum gucKonumu = rastgeleBosKonum();
+                if (gucKonumu != null) {
+                    guc = new Guc(gucKonumu, random.nextBoolean() ? GucTuru.ALTIN_ELMA : GucTuru.BUZ);
+                    gucKalanHareket = 55;
+                }
             }
         } else {
             yilan.removeLast();
@@ -106,11 +117,16 @@ public final class OyunMotoru {
     }
 
     private Konum rastgeleBosKonum() {
-        for (int deneme = 0; deneme < 1000; deneme++) {
-            Konum aday = new Konum(random.nextInt(ayarlar.sutun()), random.nextInt(ayarlar.satir()));
-            if (!yilan.contains(aday) && !engeller.contains(aday) && !aday.equals(yem)) return aday;
+        List<Konum> bosKonumlar = new ArrayList<>();
+        for (int y = 0; y < ayarlar.satir(); y++) {
+            for (int x = 0; x < ayarlar.sutun(); x++) {
+                Konum aday = new Konum(x, y);
+                if (!yilan.contains(aday) && !engeller.contains(aday) && !aday.equals(yem)) {
+                    bosKonumlar.add(aday);
+                }
+            }
         }
-        return new Konum(0, 0);
+        return bosKonumlar.isEmpty() ? null : bosKonumlar.get(random.nextInt(bosKonumlar.size()));
     }
 
     public Deque<Konum> yilan() { return new ArrayDeque<>(yilan); }

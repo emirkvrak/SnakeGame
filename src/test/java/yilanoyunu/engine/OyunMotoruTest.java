@@ -2,6 +2,8 @@ package yilanoyunu.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,5 +65,44 @@ class OyunMotoruTest {
         assertEquals(0, motor.skor());
         assertEquals(OyunDurumu.HAZIR, motor.durum());
         assertNotEquals(new Konum(6, 5), motor.yilan().peekFirst());
+    }
+
+    @Test
+    void yemYeninceSkorArtmaliVeYilanBuyumeli() {
+        Konum hedef = motor.yem();
+        motor.baslat();
+
+        if (hedef.x() < 5) {
+            adim(Yon.YUKARI);
+            while (motor.yilan().peekFirst().x() > hedef.x()) adim(Yon.SOL);
+        } else {
+            while (motor.yilan().peekFirst().x() < hedef.x()) adim(Yon.SAG);
+        }
+        while (motor.yilan().peekFirst().y() > hedef.y()) adim(Yon.YUKARI);
+        while (motor.yilan().peekFirst().y() < hedef.y()) adim(Yon.ASAGI);
+
+        assertEquals(10, motor.skor());
+        assertEquals(2, motor.yilan().size());
+    }
+
+    @Test
+    void tahtaDoldugundaGecerliKazanmaDurumuOlusturmali() {
+        OyunMotoru kucukMotor = new OyunMotoru(new OyunAyarlari(1, 1, 24, 100), new Random(42));
+
+        assertEquals(OyunDurumu.KAZANDI, kucukMotor.durum());
+        assertNull(kucukMotor.yem());
+    }
+
+    @Test
+    void uretilenYemYilaninUzerindeOlmamali() {
+        for (int i = 0; i < 50; i++) {
+            assertTrue(!motor.yilan().contains(motor.yem()));
+            motor.yenidenBaslat();
+        }
+    }
+
+    private void adim(Yon yon) {
+        motor.yonDegistir(yon);
+        motor.ilerle();
     }
 }

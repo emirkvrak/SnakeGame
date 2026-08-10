@@ -65,7 +65,7 @@ public final class OyunPaneli extends JPanel {
         add(yenidenBaslat);
         hareketTimer = new Timer(motor.ayarlar().timerMillis(), this::oyunDöngüsü);
         cizimTimer = new Timer(16, event -> {
-            if (motor.durum() == OyunDurumu.BITTI && olumBaslangici > 0
+            if ((motor.durum() == OyunDurumu.BITTI || motor.durum() == OyunDurumu.KAZANDI) && olumBaslangici > 0
                     && System.currentTimeMillis() - olumBaslangici > 700) ((Timer) event.getSource()).stop();
             repaint();
         });
@@ -94,12 +94,15 @@ public final class OyunPaneli extends JPanel {
 
     public void yenidenBaslat() {
         motor.yenidenBaslat();
+        sonSkor = 0;
+        puanAnimasyonlari.clear();
         yenidenBaslat.setVisible(false);
         baslat();
     }
 
     private void duraklatDevamEt() {
-        if (motor.durum() == OyunDurumu.BITTI || motor.durum() == OyunDurumu.HAZIR) return;
+        if (motor.durum() == OyunDurumu.BITTI || motor.durum() == OyunDurumu.KAZANDI
+                || motor.durum() == OyunDurumu.HAZIR) return;
         motor.duraklatDevamEt();
         if (motor.durum() == OyunDurumu.DURAKLATILDI) {
             hareketTimer.stop();
@@ -131,7 +134,7 @@ public final class OyunPaneli extends JPanel {
         int yeniHareketSuresi = Math.max(55, temelSure - (motor.skor() / 50) * 8);
         hareketTimer.setDelay(yeniHareketSuresi);
         if (skorDegisti != null) skorDegisti.run();
-        if (motor.durum() == OyunDurumu.BITTI) {
+        if (motor.durum() == OyunDurumu.BITTI || motor.durum() == OyunDurumu.KAZANDI) {
             hareketTimer.stop();
             if (olumBaslangici == 0) olumBaslangici = System.currentTimeMillis();
             yenidenBaslat.setVisible(true);
@@ -151,7 +154,9 @@ public final class OyunPaneli extends JPanel {
         }
         tahtaCiz(g);
         int hucre = motor.ayarlar().hucreBoyutu();
-        if (yemGorseli != null) g.drawImage(yemGorseli, motor.yem().x() * hucre, motor.yem().y() * hucre, hucre, hucre, this);
+        if (yemGorseli != null && motor.yem() != null) {
+            g.drawImage(yemGorseli, motor.yem().x() * hucre, motor.yem().y() * hucre, hucre, hucre, this);
+        }
         for (Konum engel : motor.engeller()) {
             if (mayinGorseli != null) g.drawImage(mayinGorseli, engel.x() * hucre, engel.y() * hucre, hucre, hucre, this);
         }
@@ -213,7 +218,7 @@ public final class OyunPaneli extends JPanel {
         }
         puanAnimasyonlariniCiz(g, hucre);
         ipucuCiz(g);
-        if (motor.durum() == OyunDurumu.BITTI) oyunBittiEkrani(g);
+        if (motor.durum() == OyunDurumu.BITTI || motor.durum() == OyunDurumu.KAZANDI) oyunBittiEkrani(g);
         else if (motor.durum() == OyunDurumu.DURAKLATILDI) duraklatmaEkrani(g);
         g.dispose();
     }
@@ -303,7 +308,7 @@ public final class OyunPaneli extends JPanel {
         g.fill(new RoundRectangle2D.Double(kartX, kartY, kartGenislik, kartYukseklik, 24, 24));
         g.setColor(new Color(255, 224, 72));
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 30));
-        String baslik = "OYUN BİTTİ";
+        String baslik = motor.durum() == OyunDurumu.KAZANDI ? "KAZANDINIZ" : "OYUN BİTTİ";
         g.drawString(baslik, (getWidth() - g.getFontMetrics().stringWidth(baslik)) / 2, kartY + 48);
         g.setColor(Color.WHITE);
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
