@@ -70,6 +70,10 @@ mvn test
 
 ## Java kurmadan çalıştırma
 
+[![Windows için indir](https://img.shields.io/badge/Windows-İndir-success?logo=windows)](https://github.com/emirkvrak/SnakeGame/releases/latest/download/SnakeGame-portable.zip)
+
+En son Windows sürümünü [GitHub Releases sayfasından](https://github.com/emirkvrak/SnakeGame/releases/latest) indirebilirsiniz.
+
 Geliştirici makinesinde paket oluşturmak için:
 
 ```powershell
