@@ -1,84 +1,50 @@
 # Snake Game
 
-Java 21 ve Swing ile geliştirilmiş, masaüstünde çalışan klasik bir yılan oyunudur. Oyuncu, yılanı bir ızgara üzerinde hareket ettirerek yemleri toplar; yılan büyür, skor kazanır ve duvara, kendi gövdesine veya mayınlara çarptığında oyun sona erer.
+Java 21 ve Swing ile geliştirilmiş, tek oyunculu klasik bir yılan oyunudur. Yılan yemleri ve güçlendirmeleri toplar; duvara, kendi gövdesine veya mayınlara çarptığında oyun sona erer.
 
 ## Özellikler
 
-- Ok tuşları ve WASD ile oyuncu hareketi
-- Normal yem ile büyüme ve `+10` skor
-- Altın coin ile `+50` skor
-- Skora bağlı kontrollü hız artışı
-- Geçici yavaşlatma sağlayan buz güçlendirmesi
-- Skor arttıkça mayınların ortaya çıkması
-- Duvara, kendi gövdesine veya mayına çarpma kontrolü
-- Oyun bitti ekranı
-- Oyun bittiğinde yeniden başlatma butonu
-- `P` veya `ESC` ile duraklatma/devam ettirme
-- Bilgisayarda saklanan en yüksek skor
-- Başlangıç ekranı, puan animasyonu ve ölüm efekti
-- Arka plan müziği
+- Ok tuşları veya WASD ile kontrol
+- Normal yem: `+10` puan ve yılanın büyümesi
+- Altın coin: `+50` puan
+- Buz güçlendirmesi ve skora bağlı hız artışı
+- Mayınlar, çarpışma kontrolü ve oyun sonu ekranı
+- Duraklatma/devam ettirme (`P` veya `ESC`)
+- Yeniden başlatma butonu ve yerel en yüksek skor kaydı
+- Başlangıç ekranı, animasyonlar ve arka plan müziği
 
 ## Ekran Görüntüsü
 
-![Ana menü](assets/01-main-menu.png)
+<p align="center">
+  <img src="assets/01-main-menu.png" alt="Ana menü" width="420">
+  <img src="assets/03-gameplay.png" alt="Oynanış" width="420">
+  <img src="assets/04-game-over.png" alt="Oyun bitti ekranı" width="420">
+</p>
 
-![Oynanış animasyonu](assets/02-gameplay-demo.gif)
-
-![Oynanış](assets/03-gameplay.png)
-
-![Oyun bitti ekranı](assets/04-game-over.png)
+[Oynanış animasyonunu görüntüle](assets/02-gameplay-demo.gif)
 
 ## Mimari
 
-Proje, katmanlı ve MVC benzeri bir yapı kullanır. Bu, katı bir MVC framework'ü değildir; oyun kuralları, veri modelleri ve Swing arayüzü ayrı paketlerde tutulur.
+Proje, oyun mantığı, veri modelleri ve Swing arayüzü ayrılmış katmanlı ve MVC benzeri bir yapı kullanır.
 
-### Ana giriş sınıfı
+- `yilanoyunu.YilanOyunu`: Uygulamanın giriş noktası
+- `engine.OyunMotoru`: Hareket, skor, yem/güçlendirme ve çarpışma kuralları
+- `model`: Konum, yön, oyun durumu ve güçlendirme veri modelleri
+- `ui.OyunPaneli`: Oyun alanının çizimi, timer'lar ve oyun ekranları
+- `ui.KlavyeKontrolcusu`: Klavye girişleri
+- `ui.SesOynatici`: Arka plan müziği
 
-`yilanoyunu.YilanOyunu`, uygulamayı Swing Event Dispatch Thread üzerinde başlatır ve `yilanoyunu.ui.OyunPenceresi` sınıfını oluşturur.
-
-### Oyun döngüsü
-
-`yilanoyunu.ui.OyunPaneli` iki Swing timer kullanır:
-
-- `hareketTimer`: Oyun motorunu ilerletir. Başlangıç hareket aralığı `OyunAyarlari` içindeki değerden gelir ve skor/güçlendirmelere göre değişebilir.
-- `cizimTimer`: Ekranın yeniden çizilmesini sağlar ve hareketler arasındaki görsel interpolasyonu günceller.
-
-### Klavye kontrolleri
-
-Klavye eşlemeleri `yilanoyunu.ui.KlavyeKontrolcusu` içinde Swing Key Bindings ile tanımlanır. Yön değişiklikleri `OyunMotoru` içindeki güvenli yön kuyruğuna aktarılır.
-
-### Yılan hareketi ve çarpışma
-
-`yilanoyunu.engine.OyunMotoru` yılanın konumlarını, yönünü, yemini, engellerini, güçlendirmelerini ve oyun durumunu yönetir.
-
-- `model.Konum`: Izgara koordinatını temsil eder.
-- `model.Yon`: Dört hareket yönünü ve ters yön kontrolünü tanımlar.
-- `OyunMotoru.ilerle()`: Yılanı bir adım ilerletir, yem/güçlendirme toplamayı ve çarpışmaları kontrol eder.
-- Duvar çarpışması, `duvaraCarpti` metodu ile kontrol edilir.
-- Kendine ve mayına çarpma, yeni kafa konumunun mevcut yılan/engel konumlarıyla karşılaştırılmasıyla kontrol edilir.
-
-### Yem, güçlendirme ve skor
-
-`OyunMotoru` normal yem toplandığında yılanı büyütür ve skoru `10` artırır. `model.Guc` ve `model.GucTuru` altın coin ile buz güçlendirmelerini temsil eder. En yüksek skor, `ui.SkorKaydi` tarafından Java `Preferences` API'si ile yerel kullanıcı ayarlarında saklanır.
-
-### Ekran çizimi ve kaynaklar
-
-`ui.OyunPaneli` oyun tahtasını, yılanı, yemleri, mayınları, güçlendirmeleri, animasyonları ve oyun sonu/duraklatma ekranlarını çizer. `yilanoyunu.Kaynaklar`, görsel ve ses dosyalarını classpath üzerinden yükler; kaynaklar JAR veya paketlenmiş uygulama içinde de kullanılabilir.
-
-### Oyun akışı
+Oyun akışı kısaca şöyledir:
 
 ```mermaid
 flowchart TD
-    A[YilanOyunu.main] --> B[OyunPenceresi]
-    B --> C[Başlangıç ekranı]
-    C -->|Oyunu Başlat| D[OyunPaneli]
-    D --> E[KlavyeKontrolcusu]
-    E --> F[OyunMotoru]
-    F --> G{Çarpışma var mı?}
-    G -->|Hayır| H[Hareket, skor ve çizim]
-    H --> F
-    G -->|Evet| I[Oyun bitti ekranı]
-    I -->|Yeniden Başlat| D
+    A[YilanOyunu] --> B[OyunPenceresi]
+    B --> C[OyunPaneli]
+    C --> D[KlavyeKontrolcusu]
+    D --> E[OyunMotoru]
+    E --> F{Çarpışma?}
+    F -->|Hayır| E
+    F -->|Evet| G[Oyun bitti]
 ```
 
 ## Proje Yapısı
@@ -86,170 +52,93 @@ flowchart TD
 ```text
 SnakeGame/
 ├── pom.xml
-├── README.md
 ├── build.ps1
 ├── package.ps1
 ├── assets/
-│   ├── 01-main-menu.png
-│   ├── 02-gameplay-demo.gif
-│   ├── 03-gameplay.png
-│   └── 04-game-over.png
 └── src/
     ├── main/
     │   ├── java/yilanoyunu/
     │   │   ├── YilanOyunu.java
-    │   │   ├── Kaynaklar.java
-    │   │   ├── engine/OyunMotoru.java
+    │   │   ├── engine/
     │   │   ├── model/
     │   │   └── ui/
     │   └── resources/
-    │       ├── altin-coin.png
-    │       ├── background-music.wav
-    │       ├── bomba.png
-    │       └── elma.png
-    └── test/
-        └── java/yilanoyunu/engine/OyunMotoruTest.java
+    └── test/java/yilanoyunu/engine/
 ```
 
-`target/`, `dist/`, `.idea/` ve diğer IDE/derleme çıktıları `.gitignore` tarafından dışarıda tutulur.
+Derleme ve IDE çıktıları (`target/`, `dist/`, `.idea/` vb.) `.gitignore` ile repository dışında tutulur.
 
 ## Gereksinimler
 
-- JDK 21 veya üzeri
-- Windows, Linux veya macOS üzerinde Java 21 ile kaynak koddan çalıştırılabilir; diğer işletim sistemlerinde ayrıca doğrulama yapılmamıştır.
-- IDE zorunlu değildir. IntelliJ IDEA, Apache NetBeans veya başka bir Java IDE'si kullanılabilir.
-- Üretim kodunda harici runtime kütüphanesi yoktur; Swing, Java Sound ve Java Preferences JDK API'leridir.
-- Maven, derleme/test eklentilerini ve JUnit test bağımlılığını yönetir.
+- Kaynak koddan çalıştırmak için JDK 21 veya üzeri
+- Windows, Linux veya macOS üzerinde Java 21 ile kaynak koddan çalıştırılabilir
+- IDE zorunlu değildir; proje Maven yapısındadır
+- Üretim kodunda harici runtime kütüphanesi yoktur; Swing ve Java Sound JDK ile gelir
 
-## Kurulum
+## Kurulum ve Çalıştırma
 
-### JDK kurulumu
-
-Windows üzerinde Eclipse Temurin JDK 21 kurulabilir:
-
-```powershell
-winget install --id EclipseAdoptium.Temurin.21.JDK -e --source winget
-```
-
-Kurulumu kontrol edin:
-
-```powershell
-java -version
-javac -version
-```
-
-### Repository'yi klonlama
+### Kaynak koddan
 
 ```powershell
 git clone https://github.com/emirkvrak/SnakeGame.git
 cd SnakeGame
-```
-
-## Çalıştırma
-
-### IntelliJ IDEA
-
-1. Projeyi açın veya doğrudan `pom.xml` dosyasını IntelliJ IDEA ile açın.
-2. Maven projesinin yüklenmesini bekleyin.
-3. Proje JDK'sı olarak Java 21'i seçin.
-4. `src/main/java/yilanoyunu/YilanOyunu.java` dosyasını çalıştırın.
-
-### Apache NetBeans
-
-Bu repository artık eski NetBeans `nbproject` metadata'sını kullanmaz; Maven projesidir.
-
-1. NetBeans'i JDK 21 ile açın.
-2. `File > Open Project` veya `File > Open Project from POM` seçeneğini kullanın.
-3. Repository içindeki `pom.xml` dosyasını seçin.
-4. `yilanoyunu.YilanOyunu` sınıfını ana sınıf olarak çalıştırın.
-
-### PowerShell ile derleme ve çalıştırma
-
-```powershell
 .\build.ps1
 java -cp target/classes yilanoyunu.YilanOyunu
 ```
 
-### Maven ile çalıştırma
+Alternatif olarak `pom.xml` dosyasını kullanan herhangi bir Java IDE'siyle projeyi açıp `yilanoyunu.YilanOyunu` sınıfını çalıştırabilirsiniz. Maven kuruluysa:
 
 ```powershell
 mvn compile exec:java
 ```
 
+### Java kurmadan Windows'ta oynama
+
+[![Windows için indir](https://img.shields.io/badge/Windows-İndir-success?logo=windows)](https://github.com/emirkvrak/SnakeGame/releases/latest/download/SnakeGame-portable.zip)
+
+ZIP dosyasını indirip çıkardıktan sonra `SnakeGame/SnakeGame.exe` dosyasını çalıştırın. Java kurulması gerekmez.
+
 ## Kontroller
 
 | Tuş | İşlev |
 |---|---|
-| `↑` / `W` | Yukarı hareket |
-| `↓` / `S` | Aşağı hareket |
-| `←` / `A` | Sola hareket |
-| `→` / `D` | Sağa hareket |
-| `P` / `ESC` | Duraklatma veya devam etme |
-| `YENİDEN BAŞLAT` | Oyun bittiğinde yeni oyun başlatma |
+| `↑` / `W` | Yukarı |
+| `↓` / `S` | Aşağı |
+| `←` / `A` | Sola |
+| `→` / `D` | Sağa |
+| `P` / `ESC` | Duraklat / devam ettir |
+| `YENİDEN BAŞLAT` | Oyun bittiğinde yeni oyun |
 
 ## Test
 
-Oyun motoru için JUnit 5 testleri bulunmaktadır. Maven kuruluysa:
+Oyun motoru için JUnit 5 testleri bulunur:
 
 ```powershell
 mvn test
 ```
 
-Testler yön değişikliği, ters yöne dönme engeli, hareket, başlangıç durumu ve yeniden başlatma davranışlarını kontrol eder. Swing arayüzü için otomatik UI testi bulunmamaktadır.
+Arayüz için otomatik test yoktur. Manuel olarak başlangıç ekranı, hareket, yem/puan, güçlendirmeler, çarpışma, duraklatma, müzik ve yeniden başlatma kontrol edilebilir.
 
-Manuel kontrol listesi:
+## Paketleme
 
-- Başlangıç ekranı açılıyor mu?
-- Oyun başlatılabiliyor mu?
-- Yılan hareket ediyor mu?
-- Yem yenince yılan büyüyor ve skor artıyor mu?
-- Altın coin daha yüksek skor veriyor mu?
-- Duvara çarpınca oyun bitiyor mu?
-- Kendine veya mayına çarpınca oyun bitiyor mu?
-- Duraklatma çalışıyor mu?
-- Yeniden başlatma çalışıyor mu?
-- Müzik çalıyor mu?
-
-## Windows Paketi
-
-Java kurmadan çalışacak Windows paketi GitHub Release olarak yayımlanmıştır:
-
-[![Windows için indir](https://img.shields.io/badge/Windows-İndir-success?logo=windows)](https://github.com/emirkvrak/SnakeGame/releases/latest/download/SnakeGame-portable.zip)
-
-[Snake Game v1.0.1 Release](https://github.com/emirkvrak/SnakeGame/releases/tag/v1.0.1)
-
-Geliştirici makinesinde yeniden paketlemek için JDK 21 ile:
+JDK 21 bulunan geliştirici bilgisayarında:
 
 ```powershell
 .\package.ps1
 ```
 
-Bu komut şunları oluşturur:
-
-- `dist/SnakeGame/`: Java runtime içeren taşınabilir uygulama klasörü
-- `dist/SnakeGame-portable.zip`: Son kullanıcıya gönderilecek ZIP
-- `dist/SnakeGame.jar`: Java 21 gerektiren geliştirici JAR'ı
-
-Son kullanıcı ZIP'i çıkardıktan sonra `SnakeGame/SnakeGame.exe` dosyasını çalıştırır. Java kurulması gerekmez.
-
-## Sonuçlar
-
-Proje; başlangıç ekranı, klavye ile yılan kontrolü, yem ve güçlendirmeler, skor, çarpışma kontrolü, duraklatma, oyun sonu ve yeniden başlatma akışını sağlar. Oyun motoru için temel otomatik testler bulunmaktadır; Swing arayüzü manuel olarak kontrol edilmelidir.
-
-Bu proje için performans benchmarkı bulunmamaktadır.
+Bu komut Windows için Java runtime içeren taşınabilir uygulamayı ve `dist/SnakeGame-portable.zip` dosyasını oluşturur. Güncel paket GitHub Releases bölümünde yayımlanır.
 
 ## Sınırlamalar
 
-- Tek oyunculu masaüstü uygulamasıdır.
-- Online multiplayer desteği yoktur.
-- Veritabanı veya çevrimiçi skor tablosu bulunmamaktadır.
-- Kaynak koddan çalıştırmak için JDK 21 gerekir.
-- Windows taşınabilir paketi hazırlanmıştır; Linux ve macOS paketleri ayrıca oluşturulmamıştır.
-- Swing arayüzü için otomatik test kapsamı bulunmamaktadır.
+- Tek oyunculu bir masaüstü uygulamasıdır.
+- Online multiplayer, veritabanı ve çevrimiçi skor tablosu yoktur.
+- Linux ve macOS için paketlenmiş sürüm bulunmamaktadır.
+- Swing arayüzü için otomatik test kapsamı yoktur.
 
 ## Proje Durumu
 
-Proje, üniversitenin erken döneminde hazırlanmış eğitim amaçlı bir Java projesinden geliştirilmiştir. Kaynak kodu ve oyun yapısı modernize edilmiş, Windows için `v1.0.0` taşınabilir sürümü yayımlanmıştır. Yeni özellik geliştirme durumu ayrıca belirtilmemiştir.
+Üniversitenin erken döneminde hazırlanmış eğitim amaçlı Java projesi modernize edilmiştir. Mevcut sürüm, oynanabilir Windows taşınabilir paketiyle sunulmaktadır.
 
 ## Lisans
 
