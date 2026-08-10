@@ -15,17 +15,22 @@ Java 21 ve Swing ile geliştirilmiş, tek oyunculu klasik bir yılan oyunudur. Y
 
 ## Ekran Görüntüsü
 
-<p align="center">
-  <img src="assets/01-main-menu.png" alt="Ana menü" width="420">
-  <img src="assets/03-gameplay.png" alt="Oynanış" width="420">
-  <img src="assets/04-game-over.png" alt="Oyun bitti ekranı" width="420">
-</p>
-
-[Oynanış animasyonunu görüntüle](assets/02-gameplay-demo.gif)
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="assets/01-main-menu.png" alt="Ana menü" width="380"></td>
+      <td><img src="assets/02-gameplay-demo.gif" alt="Oynanış animasyonu" width="380"></td>
+    </tr>
+    <tr>
+      <td><img src="assets/03-gameplay.png" alt="Oynanış" width="380"></td>
+      <td><img src="assets/04-game-over.png" alt="Oyun bitti ekranı" width="380"></td>
+    </tr>
+  </table>
+</div>
 
 ## Mimari
 
-Proje, oyun mantığı, veri modelleri ve Swing arayüzü ayrılmış katmanlı ve MVC benzeri bir yapı kullanır.
+Proje, oyun mantığı, veri modelleri ve Swing arayüzü ayrılmış katmanlı ve MVC benzeri bir yapı kullanır. Katı bir MVC framework'ü değildir; oyun kuralları, modeller ve arayüz ayrı paketlerde tutulur.
 
 - `yilanoyunu.YilanOyunu`: Uygulamanın giriş noktası
 - `engine.OyunMotoru`: Hareket, skor, yem/güçlendirme ve çarpışma kuralları
@@ -33,6 +38,8 @@ Proje, oyun mantığı, veri modelleri ve Swing arayüzü ayrılmış katmanlı 
 - `ui.OyunPaneli`: Oyun alanının çizimi, timer'lar ve oyun ekranları
 - `ui.KlavyeKontrolcusu`: Klavye girişleri
 - `ui.SesOynatici`: Arka plan müziği
+
+`OyunPaneli` içindeki Swing timer'lar oyun hareketini ve ekran çizimini yönetir. `OyunMotoru.ilerle()` yılanı ilerletir, yem ve güçlendirmeleri işler, ardından duvar, gövde ve mayın çarpışmalarını kontrol eder. En yüksek skor `SkorKaydi` tarafından Java Preferences API'si ile yerel olarak saklanır. Görsel ve ses dosyaları `Kaynaklar` üzerinden classpath'ten yüklenir.
 
 Oyun akışı kısaca şöyledir:
 
@@ -45,6 +52,7 @@ flowchart TD
     E --> F{Çarpışma?}
     F -->|Hayır| E
     F -->|Evet| G[Oyun bitti]
+    G -->|Yeniden başlat| C
 ```
 
 ## Proje Yapısı
@@ -52,18 +60,30 @@ flowchart TD
 ```text
 SnakeGame/
 ├── pom.xml
+├── README.md
 ├── build.ps1
 ├── package.ps1
 ├── assets/
+│   ├── 01-main-menu.png
+│   ├── 02-gameplay-demo.gif
+│   ├── 03-gameplay.png
+│   └── 04-game-over.png
 └── src/
     ├── main/
     │   ├── java/yilanoyunu/
     │   │   ├── YilanOyunu.java
+    │   │   ├── Kaynaklar.java
     │   │   ├── engine/
+    │   │   │   └── OyunMotoru.java
     │   │   ├── model/
     │   │   └── ui/
     │   └── resources/
-    └── test/java/yilanoyunu/engine/
+    │       ├── altin-coin.png
+    │       ├── background-music.wav
+    │       ├── bomba.png
+    │       └── elma.png
+    └── test/
+        └── java/yilanoyunu/engine/OyunMotoruTest.java
 ```
 
 Derleme ve IDE çıktıları (`target/`, `dist/`, `.idea/` vb.) `.gitignore` ile repository dışında tutulur.
@@ -102,12 +122,12 @@ ZIP dosyasını indirip çıkardıktan sonra `SnakeGame/SnakeGame.exe` dosyasın
 
 | Tuş | İşlev |
 |---|---|
-| `↑` / `W` | Yukarı |
-| `↓` / `S` | Aşağı |
-| `←` / `A` | Sola |
-| `→` / `D` | Sağa |
-| `P` / `ESC` | Duraklat / devam ettir |
-| `YENİDEN BAŞLAT` | Oyun bittiğinde yeni oyun |
+| `↑` / `W` | Yukarı hareket |
+| `↓` / `S` | Aşağı hareket |
+| `←` / `A` | Sola hareket |
+| `→` / `D` | Sağa hareket |
+| `P` / `ESC` | Duraklatma veya devam ettirme |
+| `YENİDEN BAŞLAT` | Oyun bittiğinde yeni oyun başlatma |
 
 ## Test
 
