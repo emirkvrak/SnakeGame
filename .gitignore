@@ -1,0 +1,15 @@
+# Build outputs
+target/
+build/
+dist/
+
+# IDE metadata
+.idea/
+*.iml
+.vscode/
+
+# NetBeans private/user-specific files
+nbproject/private/
+
+# Legacy resource folder; assets live under src/main/resources/
+resim/
