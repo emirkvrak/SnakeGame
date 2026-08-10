@@ -216,7 +216,7 @@ Java kurmadan çalışacak Windows paketi GitHub Release olarak yayımlanmışt�
 
 [![Windows için indir](https://img.shields.io/badge/Windows-İndir-success?logo=windows)](https://github.com/emirkvrak/SnakeGame/releases/latest/download/SnakeGame-portable.zip)
 
-[Snake Game v1.0.0 Release](https://github.com/emirkvrak/SnakeGame/releases/tag/v1.0.0)
+[Snake Game v1.0.1 Release](https://github.com/emirkvrak/SnakeGame/releases/tag/v1.0.1)
 
 Geliştirici makinesinde yeniden paketlemek için JDK 21 ile:
 
