@@ -75,14 +75,27 @@ mvn test
 
 Swing arayüzü, ses ve klavye etkileşimi için otomatik test bulunmaz; bu bölümler manuel olarak doğrulanmalıdır.
 
-<details>
-<summary>Diğer ekran görüntüleri</summary>
+## Ekran görüntüleri
 
-| Ana menü | Oyun alanı | Oyun sonu |
-|---|---|---|
-| <img src="assets/01-main-menu.png" alt="Snake Game ana menüsü" width="300"> | <img src="assets/03-gameplay.png" alt="Snake Game oyun alanı" width="300"> | <img src="assets/04-game-over.png" alt="Snake Game oyun sonu ekranı" width="300"> |
-
-</details>
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="assets/01-main-menu.png" alt="Snake Game ana menüsü" width="300"><br>
+      <strong>Ana menü</strong><br>
+      Oyunu başlatma ve yerel yüksek skoru görüntüleme ekranı.
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/03-gameplay.png" alt="Snake Game oyun alanı" width="300"><br>
+      <strong>Oyun alanı</strong><br>
+      Yem, mayın, güçlendirme, skor ve seviye göstergeleri.
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/04-game-over.png" alt="Snake Game oyun sonu ekranı" width="300"><br>
+      <strong>Oyun sonu</strong><br>
+      Son skor, en yüksek skor ve yeniden başlatma seçeneği.
+    </td>
+  </tr>
+</table>
 
 ## Bilinen sınırlamalar
 
