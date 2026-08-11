@@ -170,7 +170,7 @@ Bu komut Windows için Java runtime içeren taşınabilir uygulamayı ve `dist/S
 
 ## Proje Durumu
 
-Üniversitenin erken döneminde hazırlanmış eğitim amaçlı Java projesi modernize edilmiştir. Mevcut sürüm, oynanabilir Windows taşınabilir paketiyle sunulmaktadır.
+Bu proje, Kütahya Dumlupınar Üniversitesi Bilgisayar Mühendisliği bölümünde 1. sınıf uygulama ödevi olarak hazırlanmış eğitim amaçlı bir Java projesidir. Daha sonra kaynak kodu, proje yapısı, arayüzü ve Windows paketleme süreci geliştirilmiştir. Mevcut sürüm, oynanabilir Windows taşınabilir paketiyle sunulmaktadır.
 
 ## Lisans
 
