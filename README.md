@@ -1,5 +1,9 @@
 # Snake Game
 
+![Java 21](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Swing](https://img.shields.io/badge/UI-Swing-4B8BBE)
+[![Maven Tests](https://github.com/emirkvrak/SnakeGame/actions/workflows/tests.yml/badge.svg)](https://github.com/emirkvrak/SnakeGame/actions/workflows/tests.yml)
+
 Java Swing ile geliştirilmiş; yemleri ve güçlendirmeleri toplarken duvarlardan, kendi gövdenizden ve mayınlardan kaçtığınız tek oyunculu bir yılan oyunudur.
 
 Bu proje, Kütahya Dumlupınar Üniversitesi Bilgisayar Mühendisliği bölümünde 1. sınıf uygulama ödevi olarak hazırlanmıştır. Daha sonra kaynak kodu, arayüzü, testleri ve Windows paketleme süreci geliştirilerek güncellenmiştir.
@@ -25,6 +29,13 @@ ZIP dosyasını çıkarıp `SnakeGame/SnakeGame.exe` dosyasını çalıştırın
 ## Oynanış
 
 Yılan başlangıçta sağa ilerler. Normal yemler yılanı uzatır; belirli puan aralıklarında mayınlar ve süreli güçlendirmeler belirir. Duvara, yılanın gövdesine veya bir mayına çarpmak oyunu bitirir. Tahtanın tamamı doldurulursa oyun kazanılır.
+
+| Nesne | Etki |
+| --- | --- |
+| Normal yem | 10 puan kazandırır ve yılanı büyütür. |
+| Altın coin | 50 puan kazandırır. |
+| Buz güçlendirmesi | Yılanı 45 hareket boyunca yavaşlatır. |
+| Mayın | Temas edildiğinde oyunu bitirir; her 50 puanda yeni bir mayın eklenir. |
 
 ## Kontroller
 
@@ -65,7 +76,47 @@ Uygulamanın giriş sınıfı `yilanoyunu.YilanOyunu` sınıfıdır.
 
 `./package.ps1`, `dist/SnakeGame/SnakeGame.exe` uygulamasını, Java çalışma ortamını içeren `dist/SnakeGame-portable.zip` paketini ve çalıştırılabilir `dist/SnakeGame.jar` dosyasını üretir.
 
-## Testler
+### Uygulama akışı
+
+```mermaid
+flowchart LR
+    A["YilanOyunu"] --> B["OyunPenceresi"]
+    B --> C["OyunPaneli"]
+    C --> D["KlavyeKontrolcusu"]
+    C --> E["OyunMotoru"]
+    E --> F["model"]
+    C --> G["SkorKaydi"]
+    C --> H["SesOynatici"]
+```
+
+### Proje yapısı
+
+```text
+SnakeGame/
+├── .github/workflows/tests.yml
+├── assets/
+├── src/
+│   ├── main/
+│   │   ├── java/yilanoyunu/
+│   │   │   ├── engine/
+│   │   │   ├── model/
+│   │   │   └── ui/
+│   │   └── resources/
+│   └── test/java/yilanoyunu/engine/
+├── build.ps1
+├── package.ps1
+└── pom.xml
+```
+
+## Doğrulama
+
+| Kontrol | Sonuç |
+| --- | --- |
+| Maven ve JUnit 5 | 8 test, 0 hata |
+| JAR | `target/snake-game-1.0.2.jar` üretildi |
+| Windows paketi | EXE, uygulama JAR'ı ve gömülü Java runtime doğrulandı |
+| GitHub Actions | Java 21 üzerinde Maven testleri başarılı |
+| Grafik arayüz | EXE açılış smoke testi yapıldı; tam oynanış manuel doğrulanmalı |
 
 `src/test` altında oyun motorunun başlangıç durumu, hareket, ters yöne dönüş engeli, hızlı yön kuyruğu, yeniden başlatma, yem/puan/büyüme, dolu tahta ve yem konumu davranışlarını kapsayan sekiz JUnit 5 testi vardır.
 
