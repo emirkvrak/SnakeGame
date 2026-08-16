@@ -1,15 +1,15 @@
-# Build outputs
+# Maven ve jpackage derleme/dağıtım çıktıları
 target/
-build/
 dist/
 
-# IDE metadata
+# IDE ayarları
 .idea/
 *.iml
 .vscode/
 
-# NetBeans private/user-specific files
-nbproject/private/
-
-# Legacy resource folder; assets live under src/main/resources/
+# Eski kaynak klasörü
 resim/
+
+# İşletim sistemi
+Thumbs.db
+.DS_Store
